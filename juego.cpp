@@ -4,6 +4,7 @@
 #include <conio.h>	
 #include <iostream>
 #include <conio2.h>
+
 using namespace std;
 
 
@@ -20,7 +21,18 @@ int juego::getPuntaje() {
 	return puntaje; 
 }
 
-
+void juego::cargarenemigos() {
+	int i = 0;
+	
+	for (int x = 4; x <= 32; x += 4)
+		enemigos[i++] = new EnemigoW(x, 3);
+	
+	for (int x = 4; x <= 32; x += 4)
+		enemigos[i++] = new EnemigoM(x, 5);
+	
+	for (int x = 4; x <= 32; x += 4)
+		enemigos[i++] = new EnemigoH(x, 7);
+}
 
 void juego::aumentarPuntaje(int puntos) {
 	puntaje = puntaje + puntos;
@@ -56,6 +68,7 @@ void juego::iniciarjuego() {
 	
 	jugador jugador1;
 	actualizar actualizar1;
+	cargarenemigos();
 	
 	bool juegoActivo = true;
 	
@@ -74,6 +87,13 @@ void juego::iniciarjuego() {
 		jugador1.moverjugador(tecla);
 		jugador1.dibujar();
 		
+		for (int i = 0; i < MAX_ENEMIGOS; i++) {
+			if (enemigos[i] != nullptr && enemigos[i]->estaVivo()) {
+				enemigos[i]->borrar();
+				enemigos[i]->mover();
+				enemigos[i]->dibujar();
+				}
+			}
 		}
 			
 			gotoxy(2, altoBorde + 1);

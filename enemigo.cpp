@@ -3,6 +3,55 @@
 #include <conio.h>
 #include <conio2.h>
 using namespace std;
+enemigo::enemigo() {
+	posx = 10;
+	posy = 10;
+	vivo = true;
+	puntosenemigo = 3;
+	direccion = 1;
+	velocidad = 1;
+	color = 7;
+	forma = '*';
+	ataque = false;
+}
+
+enemigo::enemigo(int x, int y, char f) {
+	posx = x;
+	posy = y;
+	forma = f;
+	vivo = true;
+	color = 7;
+	direccion = 1;
+	puntosenemigo = 3;
+	velocidad = 1;
+}
+
+enemigo::enemigo(int x, int y, char f, int c) {
+	posx = x;
+	posy = y;
+	forma = f;
+	color = c;
+	vivo = true;
+	direccion = 1;
+	puntosenemigo = 3;
+	velocidad = 1;
+}
+
+
+EnemigoH::EnemigoH(int x, int y)
+	: enemigo(x, y, 'W', 12) {
+	puntosenemigo = 5;
+}
+
+EnemigoM::EnemigoM(int x, int y)
+	: enemigo(x, y, 'M', 10) {
+	puntosenemigo = 3;
+}
+
+EnemigoW::EnemigoW(int x, int y)
+	: enemigo(x, y, 'H', 14) {
+	puntosenemigo = 1;
+}
 
 //posiciones de enemigos 
 int enemigo::getPosx() { 
