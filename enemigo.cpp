@@ -81,7 +81,7 @@ void enemigo::mover() {
 		direccion = -1; 
 		posy=posy+1;
 	}
-	//limite extremo inferior
+	//limite inferior
 	if (posy > 20) posy = 20;
 }
 
@@ -104,4 +104,15 @@ void enemigo::dibujar() {
 	gotoxy(posx, posy);
 	textcolor(color);
 	cout << forma;
+}
+
+//tiro aleatorios
+bool enemigo::atacar() {
+	int prob = rand() % 100;
+	if (prob < 10) {
+		return  true;
+	}
+	else { 
+		return  false;
+	}
 }

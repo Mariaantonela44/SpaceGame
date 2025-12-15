@@ -1,5 +1,7 @@
 #include "juego.h"
+#include "enemigo.h"
 #include "jugador.h"
+#include "balas.h"  
 #include "actualizar.h"	
 #include <conio.h>	
 #include <iostream>
@@ -12,6 +14,9 @@ juego::juego() {
 	nivel = 1;
 	puntaje = 0;
 	
+	
+	for (int i = 0; i < MAX_ENEMIGOS; i++)
+		enemigos[i] = nullptr;
 }
 
 int juego::getNivel() {
@@ -37,7 +42,6 @@ void juego::cargarenemigos() {
 void juego::aumentarPuntaje(int puntos) {
 	puntaje = puntaje + puntos;
 }
-
 void dibujarBorde() {
 	
 	int ancho = 80;   
@@ -67,6 +71,8 @@ void dibujarBorde() {
 void juego::iniciarjuego() {
 	
 	jugador jugador1;
+	balas balaJugador;
+	balas balaEnemigo;
 	actualizar actualizar1;
 	cargarenemigos();
 	
@@ -81,25 +87,63 @@ void juego::iniciarjuego() {
 	while (juegoActivo) {
 		char tecla = 0;
 		
+		//si pulso una tecla
 		if (_kbhit()) tecla = getch();
 		
 		jugador1.borrar();
 		jugador1.moverjugador(tecla);
+		
+		if (tecla == ' ')
+			balaJugador.activarDisparoJugador(jugador1.getPosx(), jugador1.getPosy());
+		
+		balaJugador.movimientoBalaJugador();
+		balaEnemigo.movimientoBalaEnemigo();
 		jugador1.dibujar();
 		
+		if (balaJugador.disparoJugador()){ 
+			balaJugador.dibujar();
+		}
+		if (balaEnemigo.disparoEnemigo()) {
+			balaEnemigo.dibujar();
+		}
+		
+		//Dibujo y movimiento de enemigos 
 		for (int i = 0; i < MAX_ENEMIGOS; i++) {
 			if (enemigos[i] != nullptr && enemigos[i]->estaVivo()) {
 				enemigos[i]->borrar();
 				enemigos[i]->mover();
 				enemigos[i]->dibujar();
+				
+				if (enemigos[i]->atacar()){
+					balaEnemigo.activarDisparoEnemigo(enemigos[i]->getPosx(),enemigos[i]->getPosy());
+				}
+				
+				if (balaJugador.disparoJugador() && balaJugador.getPosx() == enemigos[i]->getPosx() &&balaJugador.getPosy() == enemigos[i]->getPosy()) {
+					aumentarPuntaje(enemigos[i]->puntosenemigo);
+					enemigos[i]->danio();
+					balaJugador.desactivarDisparoJugador();
 				}
 			}
 		}
+		
+		// bala enemigo vs jugador
+		if (balaEnemigo.disparoEnemigo() && balaEnemigo.getPosx() == jugador1.getPosx() && balaEnemigo.getPosy() == jugador1.getPosy()) {
+			jugador1.CantidadVidas();
+			balaEnemigo.desactivarDisparoEnemigo();
+			if (jugador1.Vidas() <= 0){
+				juegoActivo = false;
+			}
+		}
 			
+			// --- HUD ARREGLADO ---
 			gotoxy(2, altoBorde + 1);
-			cout << "Vidas: " << jugador1.Vidas()
-				<< "  Puntaje: " << getPuntaje() << "     ";
+			cout << "Vidas: " << jugador1.Vidas()<< "  Puntaje: " << getPuntaje() << "     ";
 	}
+	
+	// limpiar memoria
+	for (int i = 0; i < MAX_ENEMIGOS; i++)
+		delete enemigos[i];
+}
 	
 
 
