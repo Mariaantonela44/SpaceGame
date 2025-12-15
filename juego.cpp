@@ -6,6 +6,7 @@
 #include <conio.h>	
 #include <iostream>
 #include <conio2.h>
+#include "timer.h"
 
 using namespace std;
 
@@ -67,8 +68,26 @@ void dibujarBorde() {
 	}
 }
 
+void juego::Timers() {
+	
+	intervaloEnemigos = CLOCKS_PER_SEC * 1;
+	relojEnemigos = clock();
+	
+	
+	intervaloJugador = CLOCKS_PER_SEC / 12;
+	relojJugador = clock();
+	
+	
+	intervaloBalaJugador = CLOCKS_PER_SEC / 10;
+	relojBalaJugador = clock();
+	
+	
+	intervaloBalaEnemigo = CLOCKS_PER_SEC / 5;
+	relojBalaEnemigo = clock();
+}
 
 void juego::iniciarjuego() {
+	Timers();
 	
 	jugador jugador1;
 	balas balaJugador;
@@ -90,40 +109,57 @@ void juego::iniciarjuego() {
 		//si pulso una tecla
 		if (_kbhit()) tecla = getch();
 		
-		jugador1.borrar();
 		jugador1.moverjugador(tecla);
-		
-		if (tecla == ' ')
-			balaJugador.activarDisparoJugador(jugador1.getPosx(), jugador1.getPosy());
-		
-		balaJugador.movimientoBalaJugador();
-		balaEnemigo.movimientoBalaEnemigo();
 		jugador1.dibujar();
+		jugador1.borrar();
 		
-		if (balaJugador.disparoJugador()){ 
+		if (tecla == ' ' && !balaJugador.disparoJugador()){
+			balaJugador.activarDisparoJugador(jugador1.getPosx(), jugador1.getPosy());
+		}
+	
+		if(clock()-relojBalaJugador>=intervaloBalaJugador){
+		balaJugador.movimientoBalaJugador();
+		relojBalaJugador=clock();}
+		
+		//bala jugador
+		if (balaJugador.disparoJugador()) {
 			balaJugador.dibujar();
 		}
+		if (balaJugador.disparoJugador()){ 
+			balaJugador.dibujar();
+		}
+		
+		//bala enemigo
+		if (clock() - relojBalaEnemigo >= intervaloBalaEnemigo) {
+		balaEnemigo.movimientoBalaEnemigo();
+		relojBalaEnemigo = clock();
+		}
+	
 		if (balaEnemigo.disparoEnemigo()) {
 			balaEnemigo.dibujar();
 		}
 		
+		
 		//Dibujo y movimiento de enemigos 
-		for (int i = 0; i < MAX_ENEMIGOS; i++) {
-			if (enemigos[i] != nullptr && enemigos[i]->estaVivo()) {
-				enemigos[i]->borrar();
-				enemigos[i]->mover();
-				enemigos[i]->dibujar();
+		if (clock() - relojEnemigos >= intervaloEnemigos) {
+			for (int i = 0; i < MAX_ENEMIGOS; i++) {
+				if (enemigos[i] != nullptr && enemigos[i]->estaVivo()) {
+					enemigos[i]->borrar();
+					enemigos[i]->mover();
+					enemigos[i]->dibujar();
 				
-				if (enemigos[i]->atacar()){
-					balaEnemigo.activarDisparoEnemigo(enemigos[i]->getPosx(),enemigos[i]->getPosy());
-				}
+					if (enemigos[i]->atacar()){
+						balaEnemigo.activarDisparoEnemigo(enemigos[i]->getPosx(),enemigos[i]->getPosy());
+					}
 				
-				if (balaJugador.disparoJugador() && balaJugador.getPosx() == enemigos[i]->getPosx() &&balaJugador.getPosy() == enemigos[i]->getPosy()) {
-					aumentarPuntaje(enemigos[i]->puntosenemigo);
-					enemigos[i]->danio();
-					balaJugador.desactivarDisparoJugador();
+					if (balaJugador.disparoJugador() && balaJugador.getPosx() == enemigos[i]->getPosx() &&balaJugador.getPosy() == enemigos[i]->getPosy()) {
+						aumentarPuntaje(enemigos[i]->puntosenemigo);
+						enemigos[i]->danio();
+						balaJugador.desactivarDisparoJugador();
+					}
 				}
 			}
+			relojEnemigos=clock();
 		}
 		
 		// bala enemigo vs jugador
@@ -134,8 +170,23 @@ void juego::iniciarjuego() {
 				juegoActivo = false;
 			}
 		}
+		
+		//bala jugador vs enemigo 
+		for (int i = 0; i < MAX_ENEMIGOS; i++) {
+			if (enemigos[i] && enemigos[i]->estaVivo()) {
+				
+				if (balaJugador.disparoJugador() &&
+					balaJugador.getPosx() == enemigos[i]->getPosx() &&
+					balaJugador.getPosy() == enemigos[i]->getPosy()) {
+					
+					aumentarPuntaje(enemigos[i]->puntosenemigo);
+					enemigos[i]->danio();
+					balaJugador.desactivarDisparoJugador();
+				}
+			}
+		}
 			
-			// --- HUD ARREGLADO ---
+			// --- HUD ARREGLADO --- Problemas que no se veia
 			gotoxy(2, altoBorde + 1);
 			cout << "Vidas: " << jugador1.Vidas()<< "  Puntaje: " << getPuntaje() << "     ";
 	}

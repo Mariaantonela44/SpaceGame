@@ -19,6 +19,7 @@ public:
 	void iniciarjuego();
 	void cargarenemigos();
 	void aumentarPuntaje(int puntos);
+	void Timers();
 
 };
 
