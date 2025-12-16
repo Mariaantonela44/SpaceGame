@@ -14,7 +14,8 @@ using namespace std;
 juego::juego() {
 	nivel = 1;
 	puntaje = 0;
-	
+	vidasAnteriores = -1;
+	puntajeAnterior = -1;
 	
 	for (int i = 0; i < MAX_ENEMIGOS; i++)
 		enemigos[i] = nullptr;
@@ -100,18 +101,18 @@ bool juego::hayEnemigoDebajo(enemigo* actual){
 }
 
 void juego::iniciarjuego() {
-	Timers();
 	
+
 	jugador jugador1;
 	balas balaJugador;
 	balas balaEnemigo;
 	actualizar actualizar1;
+	
+
 	cargarenemigos();
+	Timers();
 	
 	bool juegoActivo = true;
-	
-	int altoBorde = 25;   
-	int anchoBorde = 80;  
 	
 	actualizar1.limpiar();
 	dibujarBorde();
@@ -132,6 +133,7 @@ void juego::iniciarjuego() {
 		if (tecla == ' ' && !balaJugador.disparoJugador()){
 			balaJugador.activarDisparoJugador(jugador1.getPosx(), jugador1.getPosy());
 		}
+		
 		//BALAS DEL JUGADOR CON TIMER
 		if(clock()-relojBalaJugador>=intervaloBalaJugador){
 		balaJugador.movimientoBalaJugador();
@@ -155,16 +157,18 @@ void juego::iniciarjuego() {
 		}
 		
 		//COLISION BALA DEL JUGADOR A ENEMIGO 
-		if(balaJugador.disparoJugador()){
-			int balaX=balaJugador.getPosx();
-			int balaY=balaJugador.getPosx();
+		if (balaJugador.disparoJugador()) {
+			
+			int bx = balaJugador.getPosx();
+			int by = balaJugador.getPosy();
 			
 			for (int i = 0; i < MAX_ENEMIGOS; i++) {
 				if (enemigos[i] && enemigos[i]->estaVivo()) {
-					int enemigoX=enemigos[i]->getPosx();
-					int enemigoY=enemigos[i]->getPosy();
 					
-					if  (balaY == enemigoY && balaX >= enemigoX && balaX < enemigoX + 3) {
+					int ex = enemigos[i]->getPosx();
+					int ey = enemigos[i]->getPosy();
+					
+					if (by == ey && bx >= ex && bx < ex + 3) {
 						
 						aumentarPuntaje(enemigos[i]->puntosenemigo);
 						enemigos[i]->danio();
@@ -240,17 +244,45 @@ void juego::iniciarjuego() {
 			
 			relojEnemigos = clock();
 		}								
-		// bala enemigo vs jugador
-		if (balaEnemigo.disparoEnemigo() && balaEnemigo.getPosx() == jugador1.getPosx() && balaEnemigo.getPosy() == jugador1.getPosy()) {
-			jugador1.CantidadVidas();
-			balaEnemigo.desactivarDisparoEnemigo();
-			if (jugador1.Vidas() <= 0){
-				juegoActivo = false;
+		
+		// =========================
+		// COLISIÓN BALA ENEMIGA
+		// =========================
+		if (balaEnemigo.disparoEnemigo()) {
+			
+			int balax = balaEnemigo.getPosx();
+			int balay = balaEnemigo.getPosy();
+			
+			int jugadorx = jugador1.getPosx();
+			int jugadory = jugador1.getPosy();
+			
+			if (balay == jugadory && balax >= jugadorx && balax < jugadorx + 3) {
+				
+				balaEnemigo.borrar();
+				balaEnemigo.desactivarDisparoEnemigo();
+				
+				jugador1.CantidadVidas();
+				jugador1.Redibujar(); 
+				
+				if (jugador1.Vidas() <= 0)
+					juegoActivo = false;
 			}
 		}
-	
-		actualizar1.limpiar();
+		if (jugador1.Vidas() != vidasAnteriores || getPuntaje() != puntajeAnterior) {
+			
+			gotoxy(2, 1);
+			cout << "Vidas: " << jugador1.Vidas()
+				<< "  Puntaje: " << getPuntaje() << "   ";
+			
+			vidasAnteriores = jugador1.Vidas();
+			puntajeAnterior = getPuntaje();
+		}
+		gotoxy(2, 1);
+		cout << "Vidas: " << jugador1.Vidas()
+			<< "  Puntaje: " << getPuntaje() << "   ";
+	}
 		
+	
 		textcolor(12);
 		gotoxy(30, 10);
 		cout << "GAME OVER";
@@ -262,7 +294,6 @@ void juego::iniciarjuego() {
 		gotoxy(20, 15);
 		cout << "Presione una tecla para salir...";
 		getch();
-		
 	// limpiar memoria
 	for (int i = 0; i < MAX_ENEMIGOS; i++)
 		delete enemigos[i];

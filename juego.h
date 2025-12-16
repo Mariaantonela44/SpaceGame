@@ -11,7 +11,10 @@ private:
 	static const int MAX_ENEMIGOS = 30;
 	enemigo* enemigos[MAX_ENEMIGOS];
 
+
 public:
+	int vidasAnteriores = -1;
+	int puntajeAnterior = -1;
 	bool hayEnemigoDebajo(enemigo* actual);
 	juego();
 	int getNivel();
