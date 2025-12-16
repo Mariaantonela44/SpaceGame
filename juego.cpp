@@ -31,13 +31,13 @@ void juego::cargarenemigos() {
 	int i = 0;
 	
 	for (int x = 4; x <= 32; x += 4)
-		enemigos[i++] = new EnemigoW(x, 3);
+		enemigos[i++] = new EnemigoH(x, 3);
 	
 	for (int x = 4; x <= 32; x += 4)
 		enemigos[i++] = new EnemigoM(x, 5);
 	
 	for (int x = 4; x <= 32; x += 4)
-		enemigos[i++] = new EnemigoH(x, 7);
+		enemigos[i++] = new EnemigoW(x, 7);
 }
 
 void juego::aumentarPuntaje(int puntos) {
@@ -51,9 +51,9 @@ void dibujarBorde() {
 	textcolor(15);
 	
 	gotoxy(1, 1);
-	for (int x = 1; x <= ancho; x++) {
+	/*for (int x = 1; x <= ancho; x++) {
 		cout << ".";
-	}
+	}*/
 	
 	for (int y = 2; y < alto; y++) {
 		gotoxy(1, y);
@@ -86,6 +86,19 @@ void juego::Timers() {
 	relojBalaEnemigo = clock();
 }
 
+bool juego::hayEnemigoDebajo(enemigo* actual){
+	for (int i = 0; i < MAX_ENEMIGOS; i++) {
+		if (enemigos[i] != nullptr && enemigos[i]->estaVivo()) {
+			if (enemigos[i]->getPosx() == actual->getPosx()) {
+				if (enemigos[i]->getPosy() > actual->getPosy()) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
 void juego::iniciarjuego() {
 	Timers();
 	
@@ -107,11 +120,14 @@ void juego::iniciarjuego() {
 		char tecla = 0;
 		
 		//si pulso una tecla
-		if (_kbhit()) tecla = getch();
-		
-		jugador1.moverjugador(tecla);
+		if (_kbhit()){ tecla = getch();
+		}else{ 
+			tecla=0;
+			}
+	
 		jugador1.dibujar();
-		jugador1.borrar();
+		jugador1.moverjugador(tecla);
+		
 		
 		if (tecla == ' ' && !balaJugador.disparoJugador()){
 			balaJugador.activarDisparoJugador(jugador1.getPosx(), jugador1.getPosy());

@@ -12,7 +12,7 @@ private:
 	enemigo* enemigos[MAX_ENEMIGOS];
 
 public:
-
+	bool hayEnemigoDebajo(enemigo* actual);
 	juego();
 	int getNivel();
 	int getPuntaje();

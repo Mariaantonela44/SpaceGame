@@ -6,6 +6,7 @@ class jugador {
 private:
 	int posx;	
 	int vidas;
+	int posxAnterior;
 public:
 	char tecla;
 	int posy;
@@ -17,5 +18,7 @@ public:
 	void moverjugador(char tecla);
 	void dibujar();
 	void borrar();	
+	void Redibujar();
+	bool necesitaRedibujar;
 };
 #endif
