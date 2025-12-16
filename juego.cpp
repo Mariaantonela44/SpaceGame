@@ -31,16 +31,18 @@ int juego::getPuntaje() {
 void juego::cargarenemigos() {
 	int i = 0;
 	
-	for (int x = 4; x <= 32; x += 4)
+	// FILA 1 — H
+	for (int x = 4; x <= 69; x += 9)
 		enemigos[i++] = new EnemigoH(x, 3);
 	
-	for (int x = 4; x <= 32; x += 4)
+	// FILA 2 — M
+	for (int x = 4; x <= 69; x += 9)
 		enemigos[i++] = new EnemigoM(x, 5);
 	
-	for (int x = 4; x <= 32; x += 4)
+	// FILA 3 — W
+	for (int x = 4; x <= 69; x += 9)
 		enemigos[i++] = new EnemigoW(x, 7);
 }
-
 void juego::aumentarPuntaje(int puntos) {
 	puntaje = puntaje + puntos;
 }
@@ -83,7 +85,7 @@ void juego::Timers() {
 	relojBalaJugador = clock();
 	
 	
-	intervaloBalaEnemigo = CLOCKS_PER_SEC / 5;
+	intervaloBalaEnemigo = CLOCKS_PER_SEC / 10;
 	relojBalaEnemigo = clock();
 }
 
@@ -277,11 +279,9 @@ void juego::iniciarjuego() {
 			vidasAnteriores = jugador1.Vidas();
 			puntajeAnterior = getPuntaje();
 		}
-		gotoxy(2, 1);
-		cout << "Vidas: " << jugador1.Vidas()
-			<< "  Puntaje: " << getPuntaje() << "   ";
 	}
 		
+	actualizar1.limpiar();
 	
 		textcolor(12);
 		gotoxy(30, 10);
@@ -294,6 +294,7 @@ void juego::iniciarjuego() {
 		gotoxy(20, 15);
 		cout << "Presione una tecla para salir...";
 		getch();
+		
 	// limpiar memoria
 	for (int i = 0; i < MAX_ENEMIGOS; i++)
 		delete enemigos[i];

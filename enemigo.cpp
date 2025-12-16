@@ -82,7 +82,7 @@ void enemigo::mover() {
 		posy=posy+1;
 	}
 	//limite inferior
-	if (posy > 20) posy = 20;
+	//if (posy > 20) posy = 20;
 }
 
 void enemigo::borrar() {
