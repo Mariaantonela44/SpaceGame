@@ -16,7 +16,7 @@ juego::juego() {
 	puntaje = 0;
 	vidasAnteriores = -1;
 	puntajeAnterior = -1;
-	
+	ganaste = false;
 	for (int i = 0; i < MAX_ENEMIGOS; i++)
 		enemigos[i] = nullptr;
 }
@@ -97,6 +97,15 @@ bool juego::hayEnemigoDebajo(enemigo* actual){
 					return true;
 				}
 			}
+		}
+	}
+	return false;
+}
+
+bool juego::hayEnemigosVivos() {
+	for (int i = 0; i < MAX_ENEMIGOS; i++) {
+		if (enemigos[i] != nullptr && enemigos[i]->estaVivo()) {
+			return true;
 		}
 	}
 	return false;
@@ -279,22 +288,32 @@ void juego::iniciarjuego() {
 			vidasAnteriores = jugador1.Vidas();
 			puntajeAnterior = getPuntaje();
 		}
+		if (!hayEnemigosVivos()) {
+			ganaste = true;
+			juegoActivo = false;
+		}
 	}
 		
 	actualizar1.limpiar();
 	
-		textcolor(12);
+	
+	if (ganaste) {
+		textcolor(10); // verde
+		gotoxy(30, 10);
+		cout << "¡GANASTE!";
+	} else {
+		textcolor(12); // rojo
 		gotoxy(30, 10);
 		cout << "GAME OVER";
-		
-		textcolor(15);
-		gotoxy(25, 12);
-		cout << "Puntaje final: " << puntaje;
-		
-		gotoxy(20, 15);
-		cout << "Presione una tecla para salir...";
-		getch();
-		
+	}
+	
+	textcolor(15);
+	gotoxy(25, 12);
+	cout << "Puntaje final: " << puntaje;
+	
+	gotoxy(20, 15);
+	cout << "Presione una tecla para salir...";
+	getch();
 	// limpiar memoria
 	for (int i = 0; i < MAX_ENEMIGOS; i++)
 		delete enemigos[i];

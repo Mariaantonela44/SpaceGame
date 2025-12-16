@@ -40,7 +40,7 @@ enemigo::enemigo(int x, int y, char f, int c) {
 
 EnemigoH::EnemigoH(int x, int y)
 	: enemigo(x, y, 'W', 12) {
-	puntosenemigo = 5;
+	puntosenemigo =5; 
 }
 
 EnemigoM::EnemigoM(int x, int y)

@@ -10,6 +10,7 @@ private:
 	int ancho = 800;
 	static const int MAX_ENEMIGOS = 30;
 	enemigo* enemigos[MAX_ENEMIGOS];
+	bool ganaste;
 
 
 public:
@@ -23,6 +24,7 @@ public:
 	void cargarenemigos();
 	void aumentarPuntaje(int puntos);
 	void Timers();
+	bool hayEnemigosVivos();
 
 };
 
