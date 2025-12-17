@@ -10,7 +10,7 @@ void mostrarMenu() {
 	actualizar actualizar1;
 	actualizar1.limpiar();
 	textcolor(14); 
-	gotoxy(30, 5); cout << "JUEGO: ";
+	gotoxy(30, 5); cout << "MI SPACE GAME - ANTONELA ROMANO ";
 	gotoxy(30, 7); cout << "a. Iniciar Juego";
 	gotoxy(30, 8); cout << "b. Instrucciones";
 	gotoxy(30, 9); cout << "c. Salir";

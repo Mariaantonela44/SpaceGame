@@ -155,9 +155,7 @@ void juego::iniciarjuego() {
 		if (balaJugador.disparoJugador()) {
 			balaJugador.dibujar();
 		}
-		if (balaJugador.disparoJugador()){ 
-			balaJugador.dibujar();
-		}
+
 		//BALAS JUGADOR
 		if (clock() - relojBalaEnemigo >= intervaloBalaEnemigo) {
 			balaEnemigo.movimientoBalaEnemigo();
