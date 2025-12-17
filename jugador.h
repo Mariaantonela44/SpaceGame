@@ -7,6 +7,9 @@ private:
 	int posx;	
 	int vidas;
 	int posxAnterior;
+	int parpadeoFrames;
+	bool visible;
+	bool enParpadeo;
 public:
 	char tecla;
 	int posy;
@@ -20,5 +23,7 @@ public:
 	void borrar();	
 	void Redibujar();
 	bool necesitaRedibujar;
+	void activarParpadeo(int duracion);
+	void actualizarParpadeo();
 };
 #endif

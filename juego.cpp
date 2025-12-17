@@ -137,6 +137,7 @@ void juego::iniciarjuego() {
 			tecla=0;
 			}
 	    //DIBUJO Y MOVIMIENTO DEL JUGADOR
+		jugador1.actualizarParpadeo();
 		jugador1.dibujar();
 		jugador1.moverjugador(tecla);
 		

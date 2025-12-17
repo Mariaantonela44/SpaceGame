@@ -3,6 +3,7 @@
 #include <conio.h>
 #include <conio2.h>
 #include <iostream>
+#include "timer.h" 
 using namespace std;
 
 jugador::jugador() {
@@ -11,6 +12,9 @@ jugador::jugador() {
 	vidas = 3;
 	posxAnterior=0;
 	necesitaRedibujar=true;
+	enParpadeo = false;     
+	parpadeoFrames = 0;   
+	visible = true; 
 }
 
 int jugador::getPosx() {
@@ -24,8 +28,40 @@ int jugador::Vidas() {
 }	
 
 void jugador::CantidadVidas() {
-	vidas= vidas -1;
-}	
+	vidas--;
+	enParpadeo = true;
+	parpadeoFrames = 10;
+	visible = true;
+	relojJugador = clock(); 
+}
+
+void jugador::actualizarParpadeo() {
+	if (!enParpadeo) return;
+	
+	
+	if (clock() - relojJugador < intervaloJugador)
+		return;
+	
+	relojJugador = clock();
+	
+	gotoxy(posx, posy);
+	
+	if (visible) {
+		cout << "A";
+	} else {
+		cout << " ";
+	}
+	
+	visible = !visible;
+	parpadeoFrames--;
+	
+	if (parpadeoFrames <= 0) {
+		enParpadeo = false;
+		visible = true;
+		necesitaRedibujar = true;
+	}
+}
+
 void jugador::dibujar() {
 	if (!necesitaRedibujar) return;
 	gotoxy(posx, posy);
